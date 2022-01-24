@@ -152,11 +152,23 @@ class PuppeteerApp:
             self.current_pose[5] = mouth_normalized_ratio
 
             self.current_pose = self.current_pose.unsqueeze(dim=0)
-
-            posed_image = self.poser.pose(self.source_image, self.current_pose).detach().cpu()
-            numpy_image = rgba_to_numpy_image(posed_image[0])
-            pil_image = PIL.Image.fromarray(np.uint8(np.rint(numpy_image * 255.0)), mode='RGBA')
-            photo_image = PIL.ImageTk.PhotoImage(image=pil_image)
+            for pitch_index in range(5):
+                for yaw_index in range(5):
+                    for roll_index in range(5):
+                        for le_index in range(5):
+                            for re_index in range(5):
+                                for m_index in range(5):
+                                    print((pitch_index, yaw_index, roll_index, le_index, re_index, m_index))
+                                    image_name = "../images/%d_%d_%d_%d_%d_%d.png" \
+                                                 % (pitch_index, yaw_index, roll_index, le_index, re_index, m_index)
+                                    self.current_pose = torch.tensor([[-1 + 0.5 * pitch_index, -1 + 0.5 * yaw_index,
+                                                                       -1 + 0.5 * roll_index, 0 + 0.25 * le_index,
+                                                                       0 + 0.25 * re_index, 0 + 0.25 * m_index]])
+                                    posed_image = self.poser.pose(self.source_image, self.current_pose).detach().cpu()
+                                    numpy_image = rgba_to_numpy_image(posed_image[0])
+                                    pil_image = PIL.Image.fromarray(np.uint8(np.rint(numpy_image * 255.0)), mode='RGBA')
+                                    photo_image = PIL.ImageTk.PhotoImage(image=pil_image)
+                                    pil_image.save(image_name, "PNG")
             self.posed_image_label.configure(image=photo_image, text="")
             self.posed_image_label.image = photo_image
             self.posed_image_label.pack()

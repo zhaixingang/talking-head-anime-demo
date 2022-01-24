@@ -123,7 +123,7 @@ class ManualPoserApp:
 
 
 if __name__ == "__main__":
-    cuda = torch.device('cuda')
+    cuda = torch.device('cpu')
     poser = MorphRotateCombinePoser256Param6(
         morph_module_spec=FaceMorpherSpec(),
         morph_module_file_name="data/face_morpher.pt",
